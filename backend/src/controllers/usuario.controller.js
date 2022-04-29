@@ -1,66 +1,49 @@
-import { User } from "../models/usuario.model.js"
+import { UserModel } from "../models/usuario.model.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import {messageGeneral} from '../utils/message'
+import message from '../utils/message.js'
+const {messageGeneral} = message
+
 const userCtrl = {}
 
 userCtrl.register = async (req, res) =>{
     try {
         const data = req.body
         // verificar que el correo no exista
-        const resp = await User.findOne({correo:data.correo});
+        const resp = await UserModel.findOne({correo:data.correo});
         if(resp){
             return messageGeneral(res,400,false,"","El correo ya existe")
         }
         // encriptar contraseña
         data.password = await bcrypt.hash(data.password,10);        
-        const newUser = await User.create(data);
+        const newUser = await UserModel.create(data);
         // crear token
         const token = jwt.sign({_id:newUser._id},"secreta")
-
-        res.status(201).json({
-            ok:true,
-            message: "Usuario creado correctamente",
-            // data: newUser
-            data:{...resp._doc,password:null,token}
-        })
+        messageGeneral(res,201,true,{...newUser._doc,password:null,token},"Usuario creado correctamente")
     } catch (error) {
-        res.status(500).json({
-            ok:false,
-            message:error.message
-        })
+        messageGeneral(res,500,false,"",error.message)                
     }
 }
 
 userCtrl.login = async (req, res)=>{
     try {
         const data= req.body;
-        const resp = await User.findOne({correo:data.correo})
+        const resp = await UserModel.findOne({correo:data.correo})
         if(!resp){
-            return res.status(400).json({
-                ok:false,
-                message:"El correo no existe"
-            });
+            return messageGeneral(res,400,false,"","El correo no existe")
         }
         const match = await bcrypt.compare(data.password, resp.password)
         if(match){
             // crear token
             const token = jwt.sign({_id:resp._id},"secreta")
-            return res.status(201).json({
-                ok:true,
-                message: "Bienvenido",
-                data:{...resp._doc, password:null,token}
-            })
+            return messageGeneral(res,201,true,{...resp._doc, password:null,token},"Bienvenido")
+
         }
-        res.status(401).json({
-            ok:false,
-            message:"la contraseña es incorrecta"
-        });
+        messageGeneral(res,401,false,"","la contraseña es incorrecta")
+
     } catch (error) {
-        res.status(500).json({
-            ok:false,
-            message:error.message
-        })
+        messageGeneral(res,500,false,"",error.message)                
+
     }
 }
 
