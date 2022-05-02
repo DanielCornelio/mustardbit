@@ -5,8 +5,6 @@ import connectDB from './database.js';
 import userRoute from './routes/usuario.route.js'
 import employeeRoute from './routes/empleado.route.js'
 
-
-
 connectDB()
 
 
