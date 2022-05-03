@@ -20,7 +20,7 @@ empleadoCtrl.listAllEmployees = async(req, res) => {
 empleadoCtrl.createEmployee = async(req, res) => {
     try {
         const data = req.body
-        const resp = await EmpleadoModel.create(data);
+        const resp = await EmpleadoModel.create({...data, usuario:req.userid});
         messageGeneral(res, 201, true, resp, "Empleado creado");
 
     } catch (error) {
@@ -43,8 +43,11 @@ empleadoCtrl.listById = async(req, res) => {
 
 empleadoCtrl.listEmployeeBoss = async(req, res) => {
     try {
-        const { id } = req.params;
-        const resp = await EmpleadoModel.find({ usuario: id })
+        // const { id } = req.params;
+        const resp = await EmpleadoModel.find({ usuario: req.userid }).populate({
+            path: "usuario",
+            select: "-password" //no traemos este dato
+        })
         messageGeneral(res, 200, true, resp, "")
 
     } catch (error) {
@@ -84,10 +87,10 @@ empleadoCtrl.updateEmployee = async(req, res) => {
 
 empleadoCtrl.searchEmployee = async(req, res) => {
     try {
-        const { id, nombres } = req.params
+        const { nombres } = req.params
         const resp = await EmpleadoModel.find({
             nombres: { $regex: ".*" + nombres + ".*" },
-            usuario: id
+            usuario: req.userid
         })
         messageGeneral(res, 200, true, resp, "")
 

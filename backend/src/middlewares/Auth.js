@@ -5,21 +5,21 @@ const { messageGeneral } = messages
 // auth
 export const verificarToken = (req, res, next) => {
     if (!req.headers.authorization) {
-        return messages(res, 401, false, null, "You are not authorized to acces this resource 1")
+        return messageGeneral(res, 401, false, null, "You are not authorized to acces this resource 1")
     }
     const token = req.headers.authorization.split(" ")[1]
     if (!token) {
-        return messages(res, 401, false, null, "You are not authorized to acces this resource 2")
+        return messageGeneral(res, 401, false, null, "You are not authorized to acces this resource 2")
     }
 
     jwt.verify(token, "secreta", async(error, payload) => {
         if (error) {
-            return messages(res, 401, false, null, "You are not authorized to acces this resource 3")
+            return messageGeneral(res, 401, false, null, "You are not authorized to acces this resource 3")
         }
         const { _id } = payload
         const resp = await UserModel.findById(_id)
         if (!resp) {
-            return messages(res, 401, false, null, "You are not authorized to acces this resource 4")
+            return messageGeneral(res, 401, false, null, "You are not authorized to acces this resource 4")
         }
         req.userid = _id
         next()
