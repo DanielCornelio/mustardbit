@@ -17,6 +17,7 @@ empleadoCtrl.listAllEmployees = async(req, res) => {
     }
 }
 
+
 empleadoCtrl.createEmployee = async(req, res) => {
     try {
         const data = req.body
