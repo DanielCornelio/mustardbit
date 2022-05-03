@@ -1,8 +1,11 @@
 import mongoose from "mongoose";
 
-const URI = 'mongodb://localhost/prueba';
+/* const URI = 'mongodb://localhost/prueba';*/
 
-const connectDB = async()=>{
+const URI = 'mongodb+srv://root:yKFDW5E9PJO3ZlAs@cluster0.j2yun.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+
+
+const connectDB = async() => {
     try {
         const db = await mongoose.connect(URI);
         console.log(`base de datos conectada' ${db.connect.name}`);
