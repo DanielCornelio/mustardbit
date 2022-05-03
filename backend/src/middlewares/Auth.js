@@ -2,6 +2,7 @@ import { UserModel } from "../models/usuario.model.js";
 import jwt from 'jsonwebtoken'
 import messages from "../utils/message.js";
 const { messageGeneral } = messages
+// auth
 export const verificarToken = (req, res, next) => {
     if (!req.headers.authorization) {
         return messages(res, 401, false, null, "You are not authorized to acces this resource 1")
