@@ -1,6 +1,6 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import react, {createContext, useContext, useState} from "react"
+import {createContext, useContext, useState} from "react"
 
 const UserContext = createContext()
 const initialState = {login:false, token: "", name:""}
@@ -19,6 +19,7 @@ export const UserProvider = (props)=>{
                 }
                 localStorage.setItem("user",JSON.stringify(userLogin))
                 setUser(userLogin)
+                navigate('/employees')
                 Swal.fire({
                     icon: 'success',
                     title: data.message,
@@ -38,9 +39,16 @@ export const UserProvider = (props)=>{
             console.log("error en la funcion login", error.message)          
         }        
     }
+
+    const exit = ()=>{
+        setUser(initialState)
+        localStorage.removeItem("user")
+    }
+
     const value={
         loginUser,
-        user
+        user,
+        exit
     }
     return <UserContext.Provider value={value}{...props}/>
 }
