@@ -1,28 +1,35 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import {createContext, useContext, useState} from "react"
+import {createContext, useContext, useEffect, useState} from "react"
 
 const UserContext = createContext()
 const initialState = {login:false, token: "", name:""}
 
 export const UserProvider = (props)=>{
     const [user,setUser]=useState(initialState)
+    useEffect(()=>{
+        const initial=JSON.parse(localStorage.getItem("user"));
+        initial?initial.login && setUser(initial):setUser(initialState)
+    },[])
 
-    const loginUser = async(dataUser,navigate)=>{
+    const actions = async(dataUser,navigate)=>{
         try {
-            const {data} =  await axios.post('http://localhost:4000/api/login',dataUser)
-            if(data.ok){
+            let resp={}
+            dataUser.nombre
+                ?(resp= await axios.post('/register',dataUser))
+                :(resp= await axios.post('/login',dataUser))
+            if(resp.data.ok){
                 const userLogin = {
                     login:true,
-                    token:data.data.token,
-                    name:data.data.nombre
+                    token:resp.data.data.token,
+                    name:resp.data.data.nombre
                 }
                 localStorage.setItem("user",JSON.stringify(userLogin))
                 setUser(userLogin)
                 navigate('/employees')
                 Swal.fire({
                     icon: 'success',
-                    title: data.message,
+                    title: resp.data.message,
                     showConfirmButton: false,
                     timer: 1500
                   })
@@ -36,9 +43,10 @@ export const UserProvider = (props)=>{
                     timer: 1500
                   })
             }
-            console.log("error en la funcion login", error.message)          
+            console.log("error en la funcion actions", error.message)          
         }        
     }
+
 
     const exit = ()=>{
         setUser(initialState)
@@ -46,9 +54,10 @@ export const UserProvider = (props)=>{
     }
 
     const value={
-        loginUser,
+        actions,
         user,
         exit
+
     }
     return <UserContext.Provider value={value}{...props}/>
 }

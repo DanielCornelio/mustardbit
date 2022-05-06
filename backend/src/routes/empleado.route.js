@@ -8,7 +8,8 @@ route.get('/', empleadoCtrl.listAllEmployees)
 
 route.post('/', verificarToken, empleadoCtrl.createEmployee)
 route.get('/listid/:id',verificarToken, empleadoCtrl.listById)
-route.get('/listboss', verificarToken, empleadoCtrl.listEmployeeBoss)
+// get employees by boss
+route.get('/geb', verificarToken, empleadoCtrl.listEmployeeBoss)
 route.delete('/delete/:id',verificarToken, empleadoCtrl.deleteEmployee)
 route.put('/update/:id',verificarToken, empleadoCtrl.updateEmployee)
 route.get('/search/:nombres',verificarToken, empleadoCtrl.searchEmployee)

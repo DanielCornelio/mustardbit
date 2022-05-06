@@ -1,13 +1,21 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { Loading } from './Loading';
 
 
 export const Register = () => {
-    const {loginUser} = useUser()
+    const navigate = useNavigate()
+    const {actions} = useUser()
     const [dataUser, setDataUser] = useState({ correo: "", password: "", nombre:"" });
-    const login = (e)=>{
+     const [loading,setLoading]=useState(false)
+
+    const register = async (e)=>{
         e.preventDefault()
-        loginUser(dataUser)
+        setLoading(true)
+        await actions(dataUser, navigate)
+        setLoading(false)
+
     }
     const handleChange = (e) => {
         setDataUser({ ...dataUser, [e.target.name]: e.target.value })
@@ -24,7 +32,10 @@ export const Register = () => {
                             <h4>Registro de Jefe</h4>
                         </div>
                         <div className="card-body">
-                            <form onSubmit={login}>
+                            {
+                                loading?<Loading/>
+                            :
+                            <form onSubmit={register}>
                                 <div className="mb-3">
                                     <label htmlFor="" className="form-label">Correo</label>
                                     <input type="email" name="correo" className='form-control' autoFocus onChange={(e) => handleChange(e)} required/>
@@ -37,8 +48,9 @@ export const Register = () => {
                                     <label htmlFor="" className="form-label">Nombre</label>
                                     <input type="text" name="nombre" className='form-control' onChange={(e) => handleChange(e)} required/>
                                 </div>
-                                <button type='submit' className='form-control btn btn-primary'>Login</button>
+                                <button type='submit' className='form-control btn btn-primary'>Guardar</button>
                             </form>
+                            }
                         </div>
                     </div>
                 </div>

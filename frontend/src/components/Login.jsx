@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { Loading } from './Loading';
 
 
 export const Login = () => {
-    const {loginUser} = useUser()
+    const {actions} = useUser()
     const navigate=useNavigate()
     const [dataUser, setDataUser] = useState({ correo: "", password: "" });
-    const login = (e)=>{
+    const [loading,setLoading]=useState(false)
+    const login = async (e)=>{
         e.preventDefault()
-        loginUser(dataUser, navigate)
+        setLoading(true)
+        await actions(dataUser, navigate)
+        setLoading(false)
     }
     const handleChange = (e) => {
         setDataUser({ ...dataUser, [e.target.name]: e.target.value })
@@ -26,7 +30,11 @@ export const Login = () => {
                             <h4>Inicio de Sesión</h4>
                         </div>
                         <div className="card-body">
-                            <form onSubmit={login}>
+                            {
+                                loading
+                                    ?<Loading/>
+                                    :
+                            (<form onSubmit={login}>
                                 <div className="mb-3">
                                     <label htmlFor="" className="form-label">Correo</label>
                                     <input type="email" name="correo" className='form-control' autoFocus onChange={(e) => handleChange(e)} required/>
@@ -36,7 +44,8 @@ export const Login = () => {
                                     <input type="password" name="password" className='form-control' onChange={(e) => handleChange(e)} required/>
                                 </div>
                                 <button type='submit' className='form-control btn btn-primary'>Login</button>
-                            </form>
+                            </form>)
+                            }
                         </div>
                     </div>
                 </div>
